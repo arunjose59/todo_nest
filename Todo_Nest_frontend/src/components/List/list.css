@@ -1,0 +1,13 @@
+.list{margin: 0 auto;
+    padding: 5%;
+    width:fit-content;
+    margin-top: 10%;
+    border-radius: 2%;
+    border: 2px black solid;
+}
+.logoutButton{
+background-color: red;
+ position:fixed;
+ top: 2vh;
+ right: 2vh;
+}
