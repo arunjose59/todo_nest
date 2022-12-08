@@ -24,13 +24,13 @@ function Signin(props) {
       .then((response) => response.json())
       .then((resp) => {
         if (resp) {
-          
+
+          localStorage.setItem("token",resp.jwt)
           localStorage.setItem("auth", true);
+          localStorage.setItem("userId", resp.id);
           navigate("/list");
-          localStorage.setItem("userId", resp);
-        } else {
-          alert("Invalid inputs");
-        }
+         
+        } 
       });
   };
 

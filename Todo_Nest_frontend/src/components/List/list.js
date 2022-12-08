@@ -15,11 +15,11 @@ function List() {
   const [val, setVal] = useState(false);
 
   const remove = async (index) => {
-    console.log(index);
+    
 
     const deletes = {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json"  },
       body: JSON.stringify({ id: index }),
     };
     const response = await fetch("/notes/delete", deletes).then((response) =>
@@ -35,14 +35,20 @@ function List() {
   function Logout() {
     localStorage.setItem("auth", false);
     localStorage.removeItem("userId")
+    localStorage.removeItem("token")
 
     navigate("/");
   }
   const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem("token")
+
+
   useEffect(() => {
     const fetchNote = {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers:{"Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+   
+
       body: JSON.stringify({ login: userId }),
     };
     const fetchData = async () => {

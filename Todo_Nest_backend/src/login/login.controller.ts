@@ -9,15 +9,18 @@ import {
 } from '@nestjs/common';
 import { LoginService } from './login.service';
 import { CreateLoginDto } from './dto/create-login.dto';
-import { UpdateLoginDto } from './dto/update-login.dto';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('login')
 export class LoginController {
-  constructor(private readonly loginService: LoginService) {}
+  constructor(private readonly loginService: LoginService,
+    private readonly jwtService: JwtService) {}
 
   @Post('/add')
-  create(@Body() createLoginDto: CreateLoginDto) {
-    return this.loginService.create(createLoginDto);
+  async create(@Body() createLoginDto: CreateLoginDto) {
+    const hashedPassword = await bcrypt.hash(createLoginDto.password, 10);
+    return this.loginService.create(createLoginDto.username, hashedPassword);
   }
 
   @Get()
@@ -26,17 +29,13 @@ export class LoginController {
   }
 
   @Post('/name')
-  findOne(@Body() createLoginDto: CreateLoginDto) {
-    return this.loginService.findUser(createLoginDto);
+  async findOne(@Body() createLoginDto: CreateLoginDto) {
+    const data = await this.loginService.findUser(createLoginDto);
+    const jwt = await this.jwtService.signAsync ({id: data})
+   
+    return {jwt:jwt,id:data}
+ 
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLoginDto: UpdateLoginDto) {
-    return this.loginService.update(+id, updateLoginDto);
-  }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.loginService.remove(+id);
-  }
 }

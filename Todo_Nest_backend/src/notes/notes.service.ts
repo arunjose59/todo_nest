@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Login } from 'src/login/entities/login.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
 import { Note } from './entities/note.entity';
@@ -12,33 +12,30 @@ export class NotesService {
     @InjectRepository(Note)
     private noteRepo: Repository<Note>,
   ) {}
-  async create(createNoteDto: CreateNoteDto, loginData: Login) {
+
+  async create(createNoteDto: CreateNoteDto, loginData: Login) : Promise<Note> {
     const note = this.noteRepo.create({
       noteName: createNoteDto.noteName,
       login: loginData,
-    });
-    return await this.noteRepo.save(note);
+    })
+    return await this.noteRepo.save(note).catch();
   }
 
-  findAll(login: number) {
-    return this.noteRepo.findOne({ where: { id: login } });
+  async findAll(login: number): Promise<Note> {
+    return await this.noteRepo.findOne({ where: { id: login } }).catch();
   }
 
-  findOne(login1: Login) {
-    return this.noteRepo.find({ where: { login: login1 } });
-  }
-  findNote(login: Login) {
-    return this.noteRepo.findOne({ where: { login: login } });
+  async findOne(login1: Login) : Promise<Note[]>{
+    return await this.noteRepo.find({ where: { login: login1 } }).catch();
   }
 
-  update(updateNoteDto: UpdateNoteDto) {
-    return this.noteRepo.update(
-      { id: updateNoteDto.id },
-      { noteName: updateNoteDto.noteName },
-    );
+  async update(updateNoteDto: UpdateNoteDto):Promise<UpdateResult> {
+    return await this.noteRepo
+      .update({ id: updateNoteDto.id }, { noteName: updateNoteDto.noteName })
+      .catch();
   }
 
-  remove(id: number) {
-    return this.noteRepo.delete({ id });
+  async remove(id: number): Promise<DeleteResult> {
+    return await this.noteRepo.delete({ id }).catch();
   }
 }

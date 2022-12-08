@@ -6,10 +6,11 @@ function Add(props) {
   const [value, setValue] = useState("");
 
   const userId = localStorage.getItem("userId");
+  const token = localStorage.getItem("token")
   const submit = async () => {
     const add = {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json"  },
       body: JSON.stringify({ noteName: value, login: userId }),
     };
     const response = await fetch("notes/add", add).then((response) =>
