@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Login } from './entities/login.entity';
 import { CreateAuthDto } from 'src/auth/dto/create-auth.dto';
 import { CreateLoginDto } from './dto/create-login.dto';
-import { UnauthorizedException } from '@nestjs/common/exceptions';
+import { HttpException, UnauthorizedException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class LoginService {
@@ -49,7 +49,9 @@ export class LoginService {
           username: createLoginDto.username
         },
       })
-      .catch();
+      .catch((e)=>{
+        throw new HttpException("Database Error",HttpStatus.BAD_GATEWAY)
+      });
     // if (!user) return false;
     if(!user){
     throw new UnauthorizedException
